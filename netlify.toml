@@ -1,0 +1,27 @@
+[build]
+  command = "npm run build"
+  publish = "out"
+  environment = { NODE_VERSION = "18" }
+
+# Отключаем Next.js Runtime плагин для статического экспорта
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+  enabled = false
+
+# Redirect /listing/:id to /listing/:id/ (add trailing slash)
+[[redirects]]
+  from = "/listing/:id"
+  to = "/listing/:id/"
+  status = 301
+
+# Serve /listing/:id/ as index.html
+[[redirects]]
+  from = "/listing/:id/"
+  to = "/listing/:id/index.html"
+  status = 200
+
+# Catch-all: serve index.html for all other routes
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
