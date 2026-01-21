@@ -3,56 +3,12 @@
 import { useEffect, useState } from 'react'
 import styles from './CarListingForm.module.css'
 import { AUTH_TOKEN_KEY } from './loginPage'
-
-const defaultAgent = {
-   uuid: "4db9d452-4aa0-4211-80b7-128b04616a84",
-  alias: "Drom_LLM_demo",
-  description: "",
-  prompt: "",
-  language: "ru-RU",
-  greeting_enabled: false,
-  greeting: "",
-  phrase_hopelessness_enabled: false,
-  phrase_hopelessness: "",
-  llm_model_profile_id: 4,
-  embedding_model_id: 1,
-  temperature: 0.3,
-  settings: JSON.stringify({}),
-
-  asr_profile_id: 1,
-  tts_profile_id: 2,
-
-  voice_settings: {
-    decode_numbers: false,
-    replace_yo: false,
-    speed: 1,
-    pitch: 0,
-    volume: 0,
-    role: "",
-    stability: 0.5,
-    similarity_boost: 0.75,
-    use_speaker_boost: false,
-    style: 0,
-    voice: "Karina2:master",
-  },
-
-  interruption_enabled: true,
-  interruption_occurrence_count: 2,
-  interruption_window_length_seconds: 3,
-
-  acknowledgement_enabled: false,
-  acknowledgement_intensity: 0,
-
-  reminder_enabled: false,
-  reminder_timeout_seconds: 5,
-  reminder_count: 2,
-
-  max_call_duration_seconds: 3600,
-}
+import { AGENT_UUID, colorNames, colors, makes, models, moscowMetroStations, years } from '@/app/assets/constants'
+import { Agent } from '@/app/assets/types'
 
 export default function CarListingForm() {
   const [token, setToken] = useState<string | null>(null)
-
+  const [agent, setAgent] = useState<Agent | null>(null)
   // Базовые поля автомобиля
   const [vin, setVin] = useState('VF3MJAHXVHS101043')
   const [sts, setSts] = useState('')
@@ -74,7 +30,6 @@ export default function CarListingForm() {
   const [description, setDescription] = useState('')
 
   // Описание и дополнительные поля
-  const [videoLink, setVideoLink] = useState('')
   const [price, setPrice] = useState('')
   const [currency, setCurrency] = useState('rubles')
   const [exchangePossible, setExchangePossible] = useState(false)
@@ -89,8 +44,6 @@ export default function CarListingForm() {
   const [phone, setPhone] = useState('')
   const [phoneError, setPhoneError] = useState('')
   const [allowQuestions, setAllowQuestions] = useState(false)
-  const [enableAssistant, setEnableAssistant] = useState(false)
-  const [assistantDescription, setAssistantDescription] = useState('')
   const [technicalCondition, setTechnicalCondition] = useState('')
 
   // Ответы на вопросы
@@ -109,45 +62,9 @@ export default function CarListingForm() {
   const [viewLocation, setViewLocation] = useState('')
   const [viewTime, setViewTime] = useState('')
 
-  const makes = ['BMW']
-  const models: Record<string, string[]> = {
-    'BMW': ['X5', '3 Series', '5 Series', 'X3'],
-   
-  }
-  const years = Array.from({ length: 30 }, (_, i) => 2024 - i)
-  const colors = [
-    { id: 'black', name: 'Черный', value: '#000000' },
-    { id: 'dark-gray', name: 'Темно-серый', value: '#333333' },
-    { id: 'light-gray', name: 'Светло-серый', value: '#CCCCCC' },
-    { id: 'white', name: 'Белый', value: '#FFFFFF' },
-    { id: 'blue', name: 'Синий', value: '#0000FF' },
-    { id: 'green', name: 'Зеленый', value: '#008000' },
-    { id: 'red', name: 'Красный', value: '#FF0000' },
-    { id: 'orange', name: 'Оранжевый', value: '#FFA500' },
-    { id: 'pink', name: 'Розовый', value: '#FFC0CB' },
-    { id: 'yellow', name: 'Желтый', value: '#FFFF00' },
-    { id: 'gold', name: 'Золотой', value: '#FFD700' },
-    { id: 'brown', name: 'Коричневый', value: '#8B4513' },
-    { id: 'purple', name: 'Фиолетовый', value: '#800080' },
-  ]
-  const colorNames: Record<string, string> = {
-    'black': 'черный',
-    'dark-gray': 'темно-серый',
-    'light-gray': 'светло-серый',
-    'white': 'белый',
-    'blue': 'голубой',
-    'green': 'зеленый',
-    'red': 'красный',
-    'orange': 'оранжевый',
-    'pink': 'розовый',
-    'yellow': 'желтый',
-    'gold': 'золотой',
-    'brown': 'коричневый',
-    'purple': 'фиолетовый',
-  }
+
   const buildPrompt = () => {
     const lines: string[] = []
-
     // Базовая информация
     lines.push(`Автомобиль: ${make} ${model}`)
     lines.push(`VIN: ${vin}`)
@@ -162,21 +79,17 @@ export default function CarListingForm() {
     )
     if (owners) lines.push(`Количество владельцев: ${owners}`)
     if (color) lines.push(`Цвет: ${colorNames[color] ?? color}`)
-
     // Особые отметки
     if (documentsProblem) {
       lines.push(`Проблемы с документами: ${documentsProblemText || 'есть'}`)
     }
-
     if (needsRepair) {
       lines.push(`Требуется ремонт: ${needsRepairText || 'Да'}`)
     }
-
     // Описание
     if (description) {
       lines.push(`Описание: ${description}`)
     }
-
     // Цена
     lines.push(`Цена: ${price} ${currency}`)
     if (exchangePossible) {
@@ -195,7 +108,6 @@ export default function CarListingForm() {
         lines.push(`Условия обмена: ${exchangeDetails}`)
       }
     }
-
     // Локация и статус
     lines.push(`Статус: ${status}`)
     lines.push(`Регион: ${region}`)
@@ -206,7 +118,6 @@ export default function CarListingForm() {
     lines.push(
       `Разрешены вопросы от покупателей: ${allowQuestions ? 'Да' : 'Нет'}`
     )
-
     // Вопросы покупателям
     if (allowQuestions) {
       lines.push(` Ответы продавца:`)
@@ -229,23 +140,66 @@ export default function CarListingForm() {
         lines.push(`Техническое состояние: ${technicalCondition}`)
     }
 
-    // Ассистент
-    if (enableAssistant && assistantDescription) {
-      lines.push(
-        `Дополнение для ассистента: ${assistantDescription}`
-      )
-    }
-
     return lines.join(', ')
   }
 
 
   const handlePut = async () => {
+    const formData = {
+      vin,
+      sts,
+      licensePlate,
+      make,
+      model,
+      steeringWheel,
+      year,
+      mileage,
+      noMileageRF,
+      owners,
+      color,
+      documentsProblem,
+      documentsProblemText,
+      needsRepair,
+      needsRepairText,
+      description,
+      price,
+      currency,
+      exchangePossible,
+      exchangeMoreExpensive,
+      exchangeEqual,
+      exchangeCheaper,
+      exchangeNotCar,
+      exchangeDetails,
+      status,
+      region,
+      city,
+      phone,
+      allowQuestions,
+      // Ответы на вопросы
+      questions: allowQuestions ? {
+        isOwner,
+        ownerName,
+        ptsRegistered,
+        ptsType,
+        hasLien,
+        sellReason,
+        ownershipYears,
+        serviceHistory,
+        hasSecondTires,
+        tireType,
+        hasAccident,
+        bargainPossible,
+        viewLocation,
+        viewTime,
+        technicalCondition
+      } : null
+    }
+    localStorage.setItem('carListingData', JSON.stringify(formData))
     const prompt = buildPrompt()
 
     try {
       const response = await fetch(
-        `/api/agent/${defaultAgent.uuid}`,
+        `/api/agent/${AGENT_UUID}`,
         {
           method: 'PUT',
           headers: {
@@ -253,7 +207,7 @@ export default function CarListingForm() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            ...defaultAgent,
+            ...agent,
             prompt,
           }),
         }
@@ -279,23 +233,37 @@ export default function CarListingForm() {
     }
   }
 
+  const loadAgent = async () => {
+    try {
+      const res = await fetch(`/api/agent/${AGENT_UUID}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!res.ok) throw new Error('agent load failed')
+
+      const data = await res.json()
+      setAgent(data)
+    } catch (e) {
+      console.error('agent load error', e)
+    }
+  }
+
   const formatPhone = (value: string) => {
     // Удаляем все нецифровые символы
     let cleaned = value.replace(/\D/g, '')
-
     // Если номер начинается с 8, заменяем на 7
     if (cleaned.length > 0 && cleaned[0] === '8') {
       cleaned = '7' + cleaned.slice(1)
     }
-
     // Если номер не начинается с 7, добавляем 7 в начало (если есть цифры)
     if (cleaned.length > 0 && cleaned[0] !== '7') {
       cleaned = '7' + cleaned
     }
-
     // Ограничиваем до 11 цифр (7 + 10 цифр номера)
     cleaned = cleaned.slice(0, 11)
-
     if (cleaned.length === 0) return ''
     if (cleaned.length === 1) return `+7`
     if (cleaned.length <= 4) return `+7 (${cleaned.slice(1)}`
@@ -377,46 +345,6 @@ export default function CarListingForm() {
     }
   }
 
-  // Станции метро Москвы
-  const moscowMetroStations = [
-    'Авиамоторная', 'Автозаводская', 'Академическая', 'Александровский сад',
-    'Алексеевская', 'Алтуфьево', 'Аннино', 'Арбатская', 'Аэропорт', 'Бабушкинская',
-    'Багратионовская', 'Баррикадная', 'Бауманская', 'Беговая', 'Белорусская',
-    'Беляево', 'Бибирево', 'Библиотека им. Ленина', 'Битцевский парк', 'Боровицкая',
-    'Ботанический сад', 'Братеево', 'Братиславская', 'Бульвар Дмитрия Донского',
-    'Бульвар Рокоссовского', 'Бунинская аллея', 'Варшавская', 'ВДНХ', 'Владыкино',
-    'Водный стадион', 'Войковская', 'Волгоградский проспект', 'Волжская', 'Волоколамская',
-    'Воробьевы горы', 'Выставочная', 'Выхино', 'Динамо', 'Дмитровская',
-    'Добрынинская', 'Домодедовская', 'Достоевская', 'Дубровка', 'Жулебино',
-    'Зябликово', 'Измайловская', 'Калужская', 'Кантемировская', 'Каховская',
-    'Каширская', 'Киевская', 'Китай-город', 'Кожуховская', 'Коломенская',
-    'Комсомольская', 'Коньково', 'Красногвардейская', 'Красносельская', 'Красные Ворота',
-    'Крестьянская застава', 'Кропоткинская', 'Крылатское', 'Кузнецкий мост', 'Кузьминки',
-    'Кунцевская', 'Курская', 'Кутузовская', 'Ленинский проспект', 'Лермонтовский проспект',
-    'Лесопарковая', 'Ломоносовский проспект', 'Лубянка', 'Люблино', 'Марксистская',
-    'Марьина Роща', 'Марьино', 'Маяковская', 'Медведково', 'Международная',
-    'Менделеевская', 'Митино', 'Молодежная', 'Нагатинская', 'Нагорная',
-    'Нахимовский проспект', 'Новогиреево', 'Новокосино', 'Новослободская', 'Новые Черемушки',
-    'Октябрьская', 'Октябрьское поле', 'Орехово', 'Отрадное', 'Охотный ряд',
-    'Павелецкая', 'Парк культуры', 'Парк Победы', 'Партизанская', 'Первомайская',
-    'Перово', 'Петровско-Разумовская', 'Печатники', 'Пионерская', 'Планерная',
-    'Площадь Ильича', 'Площадь Революции', 'Полежаевская', 'Полянка', 'Пражская',
-    'Преображенская площадь', 'Пролетарская', 'Проспект Вернадского', 'Проспект Мира',
-    'Профсоюзная', 'Пушкинская', 'Пятницкое шоссе', 'Речной вокзал', 'Рижская',
-    'Римская', 'Румянцево', 'Рязанский проспект', 'Савёловская', 'Саларьево',
-    'Свиблово', 'Севастопольская', 'Семеновская', 'Серпуховская', 'Славянский бульвар',
-    'Смоленская', 'Сокол', 'Сокольники', 'Спартак', 'Спортивная',
-    'Сретенский бульвар', 'Строгино', 'Студенческая', 'Сухаревская', 'Сходненская',
-    'Таганская', 'Тверская', 'Театральная', 'Текстильщики', 'Теплый Стан',
-    'Тимирязевская', 'Третьяковская', 'Тропарево', 'Трубная', 'Тульская',
-    'Тургеневская', 'Тушинская', 'Улица 1905 года', 'Улица Академика Янгеля',
-    'Улица Горчакова', 'Улица Скобелевская', 'Университет', 'Филатов Луг', 'Фили',
-    'Фрунзенская', 'Царицыно', 'Цветной бульвар', 'Черкизовская', 'Чертановская',
-    'Чеховская', 'Чистые пруды', 'Чкаловская', 'Шипиловская', 'Шоссе Энтузиастов',
-    'Щелковская', 'Щукинская', 'Электрозаводская', 'Юго-Западная', 'Южная',
-    'Ясенево'
-  ]
-
   // Функция для получения подсказки от LLM для технического состояния
   const fetchTechnicalConditionHint = async () => {
     try {
@@ -445,12 +373,20 @@ export default function CarListingForm() {
       setTechnicalCondition(hint)
     }
   }
-    useEffect(() => {
+
+  useEffect(() => {
+    if (!token) return
+    loadAgent()
+  }, [token])
+
+  console.log(agent);
+
+  useEffect(() => {
     setToken(localStorage.getItem(AUTH_TOKEN_KEY))
   }, [])
 
   if (!token) {
-    return null // или редирект на логин
+    return null
   }
 
   return (
@@ -923,7 +859,7 @@ export default function CarListingForm() {
                 onChange={(e) => {
                   setAllowQuestions(e.target.checked)
                   // Если включаем вопросы и включен ассистент, загружаем подсказку
-                  if (e.target.checked && enableAssistant && !technicalCondition) {
+                  if (e.target.checked && !technicalCondition) {
                     fetchTechnicalConditionHint()
                   }
                 }}
@@ -1105,8 +1041,8 @@ export default function CarListingForm() {
 
               <div className={styles.formRow}>
                 <label className={styles.label}>Возможен ли торг?</label>
-               
-                 <div className={styles.buttonGroup}>
+
+                <div className={styles.buttonGroup}>
                   <button
                     type="button"
                     onClick={() => setBargainPossible('Да')}
@@ -1151,13 +1087,13 @@ export default function CarListingForm() {
 
               <div className={styles.formRow}>
                 <label className={styles.label}>Техническое состояние</label>
-                {enableAssistant && !technicalCondition && (
+                {!technicalCondition && (
                   <div className={styles.hintBox}>
                     <span className={styles.hintIcon}>⏳</span>
                     <span className={styles.hintText}>Загрузка подсказки от LLM...</span>
                   </div>
                 )}
-                {enableAssistant && technicalCondition && (
+                {technicalCondition && (
                   <div className={styles.hintBox}>
                     <span className={styles.hintIcon}>🤖</span>
                     <span className={styles.hintText}>Подсказка от LLM загружена. Вы можете дополнить информацию ниже.</span>
@@ -1191,66 +1127,9 @@ export default function CarListingForm() {
                 alert('Пожалуйста, укажите корректный номер телефона')
                 return
               }
-              // Формируем данные формы
-              const formData = {
-                vin,
-                sts,
-                licensePlate,
-                make,
-                model,
-                steeringWheel,
-                year,
-                mileage,
-                noMileageRF,
-                owners,
-                color,
-                documentsProblem,
-                documentsProblemText,
-                needsRepair,
-                needsRepairText,
-                description,
-                videoLink,
-                price,
-                currency,
-                exchangePossible,
-                exchangeMoreExpensive,
-                exchangeEqual,
-                exchangeCheaper,
-                exchangeNotCar,
-                exchangeDetails,
-                status,
-                region,
-                city,
-                phone,
-                allowQuestions,
-                enableAssistant,
-                assistantDescription,
-                // Ответы на вопросы
-                questions: allowQuestions ? {
-                  isOwner,
-                  ownerName,
-                  ptsRegistered,
-                  ptsType,
-                  hasLien,
-                  sellReason,
-                  ownershipYears,
-                  serviceHistory,
-                  hasSecondTires,
-                  tireType,
-                  hasAccident,
-                  bargainPossible,
-                  viewLocation,
-                  viewTime,
-                  technicalCondition
-                } : null
-              }
 
-              // Сохраняем в localStorage
-              localStorage.setItem('carListingData', JSON.stringify(formData))
-              // Сохраняем в localStorage
-              
               handlePut()
-            
+
             }}
           >
             Добавить бесплатно и загрузить фото
