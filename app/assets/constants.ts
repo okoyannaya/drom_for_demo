@@ -1,0 +1,1 @@
+export const API_URL = 'https://cms-prod-asraas-v3.neuro.net/api/v1';

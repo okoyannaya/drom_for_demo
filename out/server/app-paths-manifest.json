@@ -1,9 +1,7 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/api/agent/[id]/route": "app/api/agent/[id]/route.js",
-  "/api/llm/technical-condition/route": "app/api/llm/technical-condition/route.js",
-  "/api/listing/submit/route": "app/api/listing/submit/route.js",
-  "/api/login/route": "app/api/login/route.js",
   "/page": "app/page.js",
-  "/listing/[id]/page": "app/listing/[id]/page.js"
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/login/route": "app/api/login/route.js",
+  "/listing/[id]/page": "app/listing/[id]/page.js",
+  "/api/agent/[id]/route": "app/api/agent/[id]/route.js"
 }

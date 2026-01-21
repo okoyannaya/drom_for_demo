@@ -1,3 +1,4 @@
+import { API_URL } from '@/app/assets/constants'
 import { NextResponse } from 'next/server'
 
 export async function PUT(
@@ -12,7 +13,7 @@ export async function PUT(
   }
 
   const response = await fetch(
-    `https://cms-asr-dev.neuro.net/api/v1/rag/agent/${params.id}`,
+    `${API_URL}/rag/agent/${params.id}`,
     {
       method: 'PUT',
       headers: {

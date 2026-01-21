@@ -5,8 +5,8 @@ import styles from './CarListingForm.module.css'
 import { AUTH_TOKEN_KEY } from './loginPage'
 
 const defaultAgent = {
-  uuid: "60a23534-d362-409b-ad82-d75e1ba33009",
-  alias: "raptor",
+   uuid: "4db9d452-4aa0-4211-80b7-128b04616a84",
+  alias: "Drom_LLM_demo",
   description: "",
   prompt: "",
   language: "ru-RU",
@@ -14,14 +14,14 @@ const defaultAgent = {
   greeting: "",
   phrase_hopelessness_enabled: false,
   phrase_hopelessness: "",
-  llm_model_profile_id: 9,
-  embedding_model_id: 3,
+  llm_model_profile_id: 4,
+  embedding_model_id: 1,
   temperature: 0.3,
-   settings: JSON.stringify({
-    indoubt_use_top_q: 3,
-  }),
+  settings: JSON.stringify({}),
+
   asr_profile_id: 1,
   tts_profile_id: 2,
+
   voice_settings: {
     decode_numbers: false,
     replace_yo: false,
@@ -33,17 +33,21 @@ const defaultAgent = {
     similarity_boost: 0.75,
     use_speaker_boost: false,
     style: 0,
-    voice: "Karina2:master"
+    voice: "Karina2:master",
   },
+
   interruption_enabled: true,
   interruption_occurrence_count: 2,
   interruption_window_length_seconds: 3,
+
   acknowledgement_enabled: false,
   acknowledgement_intensity: 0,
+
   reminder_enabled: false,
   reminder_timeout_seconds: 5,
   reminder_count: 2,
-  max_call_duration_seconds: 3600
+
+  max_call_duration_seconds: 3600,
 }
 
 export default function CarListingForm() {
@@ -241,7 +245,7 @@ export default function CarListingForm() {
 
     try {
       const response = await fetch(
-        '/api/agent/60a23534-d362-409b-ad82-d75e1ba33009',
+        `/api/agent/${defaultAgent.uuid}`,
         {
           method: 'PUT',
           headers: {
