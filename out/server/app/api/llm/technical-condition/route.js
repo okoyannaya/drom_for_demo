@@ -1,0 +1,11 @@
+"use strict";(()=>{var e={};e.id=889,e.ids=[889],e.modules={399:e=>{e.exports=require("next/dist/compiled/next-server/app-page.runtime.prod.js")},517:e=>{e.exports=require("next/dist/compiled/next-server/app-route.runtime.prod.js")},6538:(e,t,r)=>{r.r(t),r.d(t,{originalPathname:()=>m,patchFetch:()=>h,requestAsyncStorage:()=>p,routeModule:()=>u,serverHooks:()=>d,staticGenerationAsyncStorage:()=>l});var n={};r.r(n),r.d(n,{POST:()=>c});var o=r(9303),i=r(8716),a=r(670),s=r(7070);async function c(e){try{let{make:t,model:r,year:n,mileage:o}=await e.json(),i=`Рекомендуется проверить: двигатель, трансмиссию, подвеску, тормозную систему, кузов на наличие коррозии и повреждений.
+Для ${t} ${r} ${n} года выпуска с пробегом ${o?`${o} км`:"не указан"} рекомендуется обратить внимание на:
+- Состояние двигателя и масла
+- Работу трансмиссии (коробки передач)
+- Состояние подвески и амортизаторов
+- Тормозную систему (колодки, диски, жидкость)
+- Состояние кузова (коррозия, вмятины, царапины)
+- Электронику и освещение
+- Состояние шин и дисков
+- Работу кондиционера и отопителя
+- Состояние салона (обивка, коврики, панель приборов)`;return await new Promise(e=>setTimeout(e,500)),s.NextResponse.json({success:!0,hint:i},{status:200})}catch(e){return console.error("Error fetching LLM hint:",e),s.NextResponse.json({success:!1,hint:"Рекомендуется проверить: двигатель, трансмиссию, подвеску, тормозную систему, кузов на наличие коррозии и повреждений."},{status:500})}}let u=new o.AppRouteRouteModule({definition:{kind:i.x.APP_ROUTE,page:"/api/llm/technical-condition/route",pathname:"/api/llm/technical-condition",filename:"route",bundlePath:"app/api/llm/technical-condition/route"},resolvedPagePath:"/Users/nikapahomova/Проекты/neuro/drom_for_demo/app/api/llm/technical-condition/route.ts",nextConfigOutput:"",userland:n}),{requestAsyncStorage:p,staticGenerationAsyncStorage:l,serverHooks:d}=u,m="/api/llm/technical-condition/route";function h(){return(0,a.patchFetch)({serverHooks:d,staticGenerationAsyncStorage:l})}}};var t=require("../../../../webpack-runtime.js");t.C(e);var r=e=>t(t.s=e),n=t.X(0,[276,972],()=>r(6538));module.exports=n})();
